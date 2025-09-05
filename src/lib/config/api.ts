@@ -39,6 +39,11 @@ export const API_ENDPOINTS = {
     MRV_PROJECT_HD_MODEL_ASSIGN_MODELS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/hd-model/assign-models/`,
     MRV_PROJECT_HD_MODEL_UNASSIGNED_RECORDS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/hd-model/unassigned-records/`,
     MRV_PROJECT_HD_MODEL_UPDATE_SPECIES_MAPPING: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/hd-model/update-species-mapping/`,
+    MRV_PROJECT_HEIGHT_PREDICTION: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/height-prediction/`,
+    MRV_PROJECT_HEIGHT_PREDICTION_STATUS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/height-prediction/status/`,
+    MRV_PROJECT_SLANTED_HEIGHT_CALCULATION: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/slanted-height-calculation/`,
+    MRV_PROJECT_SLANTED_HEIGHT_CALCULATION_STATUS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/slanted-height-calculation/status/`,
+    MRV_PROJECT_HD_RELATION_DATA: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/hd-relation/data/`,
     MRV_HD_MODEL_LIST: `${API_BASE_URL}/mrv/hd-model/`,
     
     // Inventory endpoints

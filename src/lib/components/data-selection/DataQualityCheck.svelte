@@ -9,11 +9,12 @@
     let { 
         projectId = $bindable<number>(0),
         qualityCheckResults = $bindable<any>(null),
-        onQualityCheckComplete = $bindable<() => void>(() => {})
+        onQualityCheckComplete = $bindable<() => void>(() => {}),
+        allIssuesResolved = $bindable<boolean>(false)
     } = $props();
 
     // State
-    let selectedOption = $state<'selected' | 'all'>('selected');
+    let selectedOption = $state<'selected' | 'all'>('all');
     let selectedSchemaData = $state<number | null>(null);
     let availableImports = $state<any[]>([]);
     let isLoading = $state(false);
@@ -25,11 +26,51 @@
     let errorMessage = $state('');
     let successMessage = $state('');
     let lastQualityCheckParams = $state<any>(null);
+    let isInNewCheckMode = $state<boolean>(false);
+
+    // Effect to update allIssuesResolved when quality check results change
+    $effect(() => {
+        debug('DataQualityCheck', 'Effect triggered - checking allIssuesResolved', {
+            hasQualityCheckResults: !!qualityCheckResults,
+            hasIssues: !!(qualityCheckResults?.issues),
+            issuesCount: qualityCheckResults?.issues?.length || 0
+        });
+        
+        if (!qualityCheckResults || !qualityCheckResults.issues) {
+            allIssuesResolved = false;
+            debug('DataQualityCheck', 'No quality results or issues - setting allIssuesResolved to false');
+            return;
+        }
+        
+        // Check if all issues have count 0 or status 'corrected'
+        const resolved = qualityCheckResults.issues.every((issue: any) => 
+            issue.count === 0 || issue.status === 'corrected'
+        );
+        
+        allIssuesResolved = resolved;
+        debug('DataQualityCheck', 'Updated allIssuesResolved', {
+            allIssuesResolved: resolved,
+            issues: qualityCheckResults.issues.map((issue: any) => ({
+                type: issue.type,
+                count: issue.count,
+                status: issue.status,
+                resolved: issue.count === 0 || issue.status === 'corrected'
+            }))
+        });
+    });
+
+    // Effect to reload quality results when projectId changes
+    $effect(() => {
+        if (projectId) {
+            checkExistingQualityResults();
+        }
+    });
 
     // Load available imports when component mounts
     onMount(async () => {
         if (projectId) {
             await loadAvailableImports();
+            await checkExistingQualityResults();
         }
     });
 
@@ -48,6 +89,67 @@
         } catch (error) {
             debugError('DataQualityCheck', 'Error loading available imports', error);
             errorMessage = 'Failed to load available imports.';
+        }
+    }
+
+    // Check for existing quality check results
+    async function checkExistingQualityResults() {
+        if (!projectId) return;
+
+        try {
+            debug('DataQualityCheck', 'Checking for existing quality results', { projectId });
+            
+            // Try to run a quality check with 'all' option to get current status
+            const requestBody = {
+                check_type: 'all',
+                schema_data: null
+            };
+
+            const url = API_ENDPOINTS.MRV_PROJECT_DATA_QUALITY_CHECK(projectId);
+            
+            debugAPI('POST', url, requestBody, 'check-existing-results-request');
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                debugAPI('POST', url, result, 'check-existing-results-response');
+                
+                if (result.success && result.results) {
+                    qualityCheckResults = result.results;
+                    lastQualityCheckParams = requestBody;
+                    
+                    debug('DataQualityCheck', 'Loaded existing quality results', {
+                        totalRecords: result.results?.totalRecords,
+                        totalIssues: result.results?.totalIssues,
+                        qualityScore: result.results?.qualityScore,
+                        issues: result.results?.issues?.map((issue: any) => ({
+                            type: issue.type,
+                            count: issue.count,
+                            status: issue.status
+                        }))
+                    });
+                } else {
+                    debug('DataQualityCheck', 'No existing quality results found', {
+                        success: result.success,
+                        hasResults: !!result.results
+                    });
+                }
+            } else {
+                debug('DataQualityCheck', 'No existing quality results found or error occurred', {
+                    status: response.status,
+                    statusText: response.statusText
+                });
+            }
+        } catch (error) {
+            debugError('DataQualityCheck', 'Error checking existing quality results', error);
+            // Don't show error message for this - it's just a background check
         }
     }
 
@@ -109,6 +211,7 @@
             if (result.success) {
                 qualityCheckResults = result.results;
                 successMessage = 'Data quality check completed successfully!';
+                isInNewCheckMode = false; // Reset new check mode after successful completion
                 
                 debug('DataQualityCheck', 'Quality check completed successfully', {
                     totalRecords: result.results?.totalRecords,
@@ -170,6 +273,7 @@
             if (result.success) {
                 qualityCheckResults = result.results;
                 successMessage = 'Quality check results refreshed successfully!';
+                isInNewCheckMode = false; // Reset new check mode after successful refresh
                 
                 debug('DataQualityCheck', 'Quality check refreshed successfully', {
                     totalRecords: result.results?.totalRecords,
@@ -315,7 +419,27 @@
             <h3 class="text-lg font-semibold text-slate-900 mb-4">Select Quality Check Scope</h3>
             
             <div class="space-y-4">
-                <!-- Option 1: Selected Schema Data -->
+                <!-- Option 1: Calculate All Data -->
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="qualityCheckOption"
+                        value="all"
+                        bind:group={selectedOption}
+                        class="w-4 h-4 text-emerald-600 border-slate-300 focus:ring-emerald-500 mt-1"
+                    />
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <RefreshCw size={16} class="text-emerald-600" />
+                            <span class="font-medium text-slate-900">Calculate All Data</span>
+                        </div>
+                        <p class="text-sm text-slate-600 mt-1">
+                            Perform comprehensive quality check on all imported data across all schemas.
+                        </p>
+                    </div>
+                </label>
+
+                <!-- Option 2: Selected Schema Data -->
                 <label class="flex items-start gap-3 cursor-pointer">
                     <input
                         type="radio"
@@ -331,26 +455,6 @@
                         </div>
                         <p class="text-sm text-slate-600 mt-1">
                             Perform quality check only on data from a specific imported schema and table.
-                        </p>
-                    </div>
-                </label>
-
-                <!-- Option 2: Recalculate All -->
-                <label class="flex items-start gap-3 cursor-pointer">
-                    <input
-                        type="radio"
-                        name="qualityCheckOption"
-                        value="all"
-                        bind:group={selectedOption}
-                        class="w-4 h-4 text-emerald-600 border-slate-300 focus:ring-emerald-500 mt-1"
-                    />
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2">
-                            <RefreshCw size={16} class="text-emerald-600" />
-                            <span class="font-medium text-slate-900">Recalculate All Data</span>
-                        </div>
-                        <p class="text-sm text-slate-600 mt-1">
-                            Perform comprehensive quality check on all imported data across all schemas.
                         </p>
                     </div>
                 </label>
@@ -392,8 +496,26 @@
                 </div>
             {/if}
 
-            <!-- Start Quality Check Button -->
-            <div class="mt-6 flex justify-center">
+            <!-- Action Buttons -->
+            <div class="mt-6 flex justify-center gap-3">
+                {#if isInNewCheckMode}
+                    <button
+                        onclick={() => {
+                            isInNewCheckMode = false;
+                            // Restore the previous quality check results
+                            if (lastQualityCheckParams) {
+                                qualityCheckResults = null; // This will trigger the effect to reload results
+                                setTimeout(() => {
+                                    checkExistingQualityResults();
+                                }, 100);
+                            }
+                        }}
+                        class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                    >
+                        Cancel
+                    </button>
+                {/if}
+                
                 <button
                     onclick={startQualityCheck}
                     disabled={isLoading || (selectedOption === 'selected' && !selectedSchemaData)}
@@ -443,7 +565,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {#each qualityCheckResults.issues as issue}
                             <div class="border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                                 onclick={() => handleIssueSelect(issue)}>
+                                 role="button"
+                                 tabindex="0"
+                                 onclick={() => handleIssueSelect(issue)}
+                                 onkeydown={(e) => e.key === 'Enter' || e.key === ' ' ? handleIssueSelect(issue) : null}>
                                 <div class="flex items-center gap-3 mb-3">
                                     <div class={`p-2 rounded-lg ${getIssueColor(issue.type)}`}>
                                         {#if issue.type === 'plot_code'}
@@ -501,7 +626,10 @@
             <!-- Action Buttons -->
             <div class="flex justify-start gap-3">
                 <button
-                    onclick={() => qualityCheckResults = null}
+                    onclick={() => {
+                        qualityCheckResults = null;
+                        isInNewCheckMode = true;
+                    }}
                     class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium transition-colors"
                 >
                     Run New Check

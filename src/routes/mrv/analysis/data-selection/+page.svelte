@@ -18,6 +18,7 @@
      let hasExistingImports = $state<boolean>(false);
      let isValidatingData = $state<boolean>(false);
      let qualityCheckResults = $state<any>(null);
+     let allIssuesResolved = $state<boolean>(false);
     
     // Update project ID when project data changes and initialize current step
     $effect(() => {
@@ -413,7 +414,15 @@
       <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div class="flex items-center gap-4">
-            <button onclick={() => goto('/mrv/analysis')} class="p-2 hover:bg-slate-100 rounded-lg">
+            <button onclick={() => {
+              // Preserve URL parameters when going back
+              const urlProjectId = $page.url.searchParams.get('project');
+              const urlProjectName = $page.url.searchParams.get('name');
+              let targetUrl = '/mrv/analysis';
+              if (urlProjectId) targetUrl += `?project=${urlProjectId}`;
+              if (urlProjectName) targetUrl += `${urlProjectId ? '&' : '?'}name=${encodeURIComponent(urlProjectName)}`;
+              goto(targetUrl);
+            }} class="p-2 hover:bg-slate-100 rounded-lg">
               <ArrowLeft class="h-5 w-5 text-slate-600" />
             </button>
             <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -481,6 +490,7 @@
                bind:importResults={importResults}
                bind:projectId={currentProjectId}
                bind:cameFromStep1={cameFromStep1}
+               bind:hasExistingData={hasExistingImports}
              />
             
           {:else if currentStep === 3}
@@ -488,6 +498,7 @@
              <DataQualityCheck 
                projectId={currentProjectId}
                bind:qualityCheckResults={qualityCheckResults}
+               bind:allIssuesResolved={allIssuesResolved}
                onQualityCheckComplete={() => {
                  // Handle quality check completion
                  console.log('Quality check completed');
@@ -519,11 +530,11 @@
                !selectedSchemaData.tableName || selectedSchemaData.schemaName.trim() === '' || 
                selectedSchemaData.tableName.trim() === '')) || 
                (currentStep === 2 && (!importResults || !importResults.success) && !hasExistingImports) ||
-               (currentStep === 3 && (!qualityCheckResults || (qualityCheckResults.issues && qualityCheckResults.issues.some((issue: any) => issue.count > 0 && issue.status !== 'corrected'))))}
+               (currentStep === 3 && (!qualityCheckResults || !allIssuesResolved))}
                class="px-4 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed {
                  (currentStep === 1 && (!selectedSchemaData || !selectedSchemaData.schemaName || !selectedSchemaData.tableName || selectedSchemaData.schemaName.trim() === '' || selectedSchemaData.tableName.trim() === '')) || 
                  (currentStep === 2 && (!importResults || !importResults.success) && !hasExistingImports) ||
-                 (currentStep === 3 && (!qualityCheckResults || (qualityCheckResults.issues && qualityCheckResults.issues.some((issue: any) => issue.count > 0 && issue.status !== 'corrected'))))
+                 (currentStep === 3 && (!qualityCheckResults || !allIssuesResolved))
                  ? 'bg-slate-200 text-slate-500' : 'bg-emerald-600 hover:bg-emerald-700 text-white'}"
              >
                {currentStep === steps.length ? 'Continue to Height-Diameter Modeling' : 
@@ -531,7 +542,7 @@
                  !selectedSchemaData.tableName || selectedSchemaData.schemaName.trim() === '' || 
                  selectedSchemaData.tableName.trim() === '') ? 'Select Schema and Table to Continue' :
                 currentStep === 2 && (!importResults || !importResults.success) && !hasExistingImports ? 'Import Data to Continue' :
-                currentStep === 3 && (!qualityCheckResults || (qualityCheckResults.issues && qualityCheckResults.issues.some((issue: any) => issue.count > 0 && issue.status !== 'corrected'))) ? 'Resolve All Issues to Continue' :
+                currentStep === 3 && (!qualityCheckResults || !allIssuesResolved) ? 'Resolve All Issues to Continue' :
                 currentStep === 4 ? 'Complete Data Cleaning' : 'Next Step'}
             </button>
           </div>

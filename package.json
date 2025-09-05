@@ -37,7 +37,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^0.514.0"
-		 
+		"@lucide/svelte": "^0.514.0",
+		"chart.js": "^4.5.0"
 	}
 }

@@ -56,6 +56,7 @@ Import the selected data into your analysis project with options for handling ex
 - **Selected Data Source**: Confirmation of your schema.table selection
 - **Import Action Options**: Choose how to handle existing data
 - **Data Preview**: Option to preview data before import
+- **Existing Data Detection**: Warning when existing data is found
 
 ### Import Actions
 
@@ -63,11 +64,10 @@ Import the selected data into your analysis project with options for handling ex
 - **What it does**: Adds new data alongside existing records
 - **When to use**: First time importing data or adding additional data sources
 - **Risk level**: Low - won't affect existing data
-- **TO DO** : once imported, do not allow to import data from same schema and table again.
 
 #### 2. Replace Selected Schema/Table Only
 - **What it does**: Removes data from the same schema/table combination, then adds new data
-- ** When to use**: Updating data from the same source
+- **When to use**: Updating data from the same source
 - **Risk level**: Medium - affects data from the same source
 
 #### 3. Replace All Data
@@ -93,9 +93,9 @@ Import the selected data into your analysis project with options for handling ex
    - Verify the imported row count matches expectations
 
 ### Validation Requirements
-- Import must complete successfully
+- Import must complete successfully OR existing data must be detected
 - At least one import must have data (imported_rows > 0)
-- The "Next Step" button will be enabled only when imports are successful
+- The "Next Step" button will be enabled when imports are successful OR when existing data is available
 
 ---
 
@@ -108,23 +108,25 @@ Perform comprehensive validation to identify data quality issues that need atten
 - **Quality Check Options**: Choose scope of validation
 - **Quality Check Results**: Summary of issues found
 - **Issue Categories**: Detailed breakdown by issue type
+- **Cancel Button**: Available when running new checks
 
 ### Quality Check Options
 
-#### Option 1: Check Selected Schema Data
+#### Option 1: Calculate All Data (Default - Recommended)
+- **Scope**: Comprehensive validation across all imported data sources
+- **Use when**: You want to validate your entire dataset
+- **Selection**: No additional selection needed
+- **Default**: This option is selected by default
+
+#### Option 2: Check Selected Schema Data
 - **Scope**: Validates only data from a specific imported schema/table
 - **Use when**: You want to focus on a particular data source
 - **Selection required**: Must choose a specific import from the dropdown
 
-#### Option 2: Recalculate All Data
-- **Scope**: Comprehensive validation across all imported data sources
-- **Use when**: You want to validate your entire dataset
-- **Selection**: No additional selection needed
-
 ### How to Proceed
 1. **Choose Scope**:
-   - Select your preferred validation option
-   - If choosing "Selected Schema Data", pick the specific import to validate
+   - "Calculate All Data" is selected by default (recommended)
+   - If choosing "Check Selected Schema Data", pick the specific import to validate
    
 2. **Start Quality Check**:
    - Click "Start Quality Check" button
@@ -135,6 +137,11 @@ Perform comprehensive validation to identify data quality issues that need atten
    - Check the total records validated and quality score
    - Review issues by category (Plot Code, Physiography Zone, Tree Number, Species Code, DBH)
    - Click on any issue category to see detailed records
+
+4. **Run New Check** (if needed):
+   - Click "Run New Check" to return to the selection view
+   - A "Cancel" button will appear to return to the quality summary
+   - Use "Cancel" to go back to the quality summary without running a new check
 
 ### Issue Categories
 
@@ -174,6 +181,7 @@ Perform comprehensive validation to identify data quality issues that need atten
 ### Validation Requirements
 - All quality issues must be resolved (corrected or ignored)
 - The "Next Step" button will be enabled only when all issues are addressed
+- If you come directly to this step and all issues are already resolved, the "Next" button will be enabled automatically
 
 ---
 

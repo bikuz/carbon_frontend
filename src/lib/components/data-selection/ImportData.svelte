@@ -9,7 +9,8 @@
         selectedSchemaData = $bindable<{ schemaName: string; tableName: string } | null>(null),
         importResults = $bindable<any>(null),
         projectId = $bindable<number>(0),
-        cameFromStep1 = $bindable<boolean>(false)
+        cameFromStep1 = $bindable<boolean>(false),
+        hasExistingData = $bindable<boolean>(false)
     } = $props();
 
     // State
@@ -18,7 +19,6 @@
     let successMessage = $state('');
     let showPreview = $state(false);
     let existingImports = $state<any[]>([]);
-    let hasExistingData = $state(false);
     let refreshHistoryTrigger = $state(0);
     let previewSchemaName = $state('');
     let previewTableName = $state('');
@@ -356,7 +356,7 @@
             bind:isVisible={showPreview}
             bind:onImportConfirm={handlePreviewImportConfirm}
             bind:onCancel={handlePreviewCancel}
-            bind:hasExistingData={hasExistingData}
+            hasExistingData={hasExistingData}
         />
     {/if}
 </div>
