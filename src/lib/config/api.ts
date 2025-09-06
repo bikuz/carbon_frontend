@@ -46,6 +46,10 @@ export const API_ENDPOINTS = {
     MRV_PROJECT_HD_RELATION_DATA: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/hd-relation/data/`,
     MRV_HD_MODEL_LIST: `${API_BASE_URL}/mrv/hd-model/`,
     
+    // MRV Volume Ratio endpoints
+    MRV_PROJECT_VOLUME_RATIO_CALCULATION: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/volume-ratio-calculation/`,
+    MRV_PROJECT_VOLUME_RATIO_STATUS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/volume-ratio-calculation/status/`,
+    
     // Inventory endpoints
     INVENTORY_LIST_SCHEMAS: `${API_BASE_URL}/inventory/list-schemas/`,
     INVENTORY_MERGE_SCHEMAS: `${API_BASE_URL}/inventory/merge-multiple-schemas-optimized/`,

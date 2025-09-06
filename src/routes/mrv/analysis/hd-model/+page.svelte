@@ -380,7 +380,7 @@
                         debug('Project updated to Phase 3 successfully:', result.project);
                         slantedHeightComplete = true;
                         // Navigate to next phase
-                        goto(`/mrv/analysis/volume-ratio?project=${currentProjectId}&name=${encodeURIComponent(projectData?.name || '')}`);
+                        goto(`/mrv/analysis/vol-calc?project=${currentProjectId}&name=${encodeURIComponent(projectData?.name || '')}`);
                     }
                 }
             } catch (error) {
