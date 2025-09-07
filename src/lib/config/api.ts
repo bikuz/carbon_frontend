@@ -50,6 +50,14 @@ export const API_ENDPOINTS = {
     MRV_PROJECT_VOLUME_RATIO_CALCULATION: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/volume-ratio-calculation/`,
     MRV_PROJECT_VOLUME_RATIO_STATUS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/volume-ratio-calculation/status/`,
     
+    // MRV Carbon Calculation endpoints
+    MRV_ALLOMETRIC_MODELS: `${API_BASE_URL}/mrv/allometric-models/`,
+    MRV_PROJECT_ALLOMETRIC_ASSIGNMENT_STATUS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/allometric-assignment-status/`,
+    MRV_PROJECT_ALLOMETRIC_ASSIGNMENT: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/allometric-assignment/`,
+    MRV_PROJECT_SAVE_ALLOMETRIC_ASSIGNMENTS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/save-allometric-assignments/`,
+    MRV_PROJECT_BIOMASS_CALCULATION_STATUS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/biomass-calculation-status/`,
+    MRV_PROJECT_BIOMASS_CALCULATION: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/biomass-calculation/`,
+    
     // Inventory endpoints
     INVENTORY_LIST_SCHEMAS: `${API_BASE_URL}/inventory/list-schemas/`,
     INVENTORY_MERGE_SCHEMAS: `${API_BASE_URL}/inventory/merge-multiple-schemas-optimized/`,
