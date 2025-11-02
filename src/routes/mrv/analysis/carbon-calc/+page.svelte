@@ -55,6 +55,7 @@
     let biomassResults = $state<any>(null);
     let carbonResults = $state<any>(null);
     let calculationSummary = $state<any>(null);
+    let calculatedZones = $state<number[]>([]);
     
     // Initialize store from URL parameters if store is empty
     $effect(() => {
@@ -618,6 +619,74 @@
         }
     }
     
+    // Calculate biomass and carbon for a specific zone
+    async function calculateBiomassForZone(phyZone: number) {
+        if (!currentProjectId) return;
+        
+        isCalculatingBiomass = true;
+        processingMessage = `Calculating biomass and carbon for zone ${phyZone}...`;
+        debug(`Starting biomass and carbon calculation for zone ${phyZone}`);
+        
+        try {
+            const url = API_ENDPOINTS.MRV_PROJECT_BIOMASS_CALCULATION(currentProjectId);
+            debugAPI('POST', url, { phy_zone: phyZone }, 'request');
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phy_zone: phyZone })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                debugAPI('POST', url, data, 'response');
+                
+                if (data.success) {
+                    debug(`Biomass and carbon calculation completed successfully for zone ${phyZone}:`, data);
+                    
+                    // Update results
+                    biomassResults = data.biomass_results || {};
+                    carbonResults = data.carbon_results || {};
+                    calculationSummary = data.summary || {};
+                    
+                    // Add zone to calculated zones list
+                    if (!calculatedZones.includes(phyZone)) {
+                        calculatedZones = [...calculatedZones, phyZone];
+                    }
+                    
+                    // Check if all zones are now calculated
+                    await checkBiomassCalculationStatus();
+                    
+                    // Show success message
+                    alert(`Biomass and carbon calculation completed for zone ${phyZone}! Carbon: ${data.summary?.total_carbon || 0} tons/ha`);
+                } else {
+                    debug(`Failed to calculate biomass and carbon for zone ${phyZone}:`, data.error);
+                    alert(`Error calculating biomass and carbon for zone ${phyZone}: ${data.error}`);
+                }
+            } else {
+                debug(`Failed to calculate biomass and carbon for zone ${phyZone}:`, response.status);
+                const errorData = await response.json().catch(() => ({}));
+                const errorMessage = errorData.error || `HTTP ${response.status}: ${response.statusText}`;
+                alert(`Failed to calculate biomass and carbon for zone ${phyZone}: ${errorMessage}`);
+            }
+        } catch (error) {
+            debug(`Error calculating biomass and carbon for zone ${phyZone}:`, error);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+            alert(`Error calculating biomass and carbon for zone ${phyZone}: ${errorMessage}`);
+        } finally {
+            isCalculatingBiomass = false;
+            processingMessage = '';
+        }
+    }
+    
+    // Show zone data
+    function showZoneData(phyZone: number) {
+        // TODO: Implement zone data display functionality
+        alert(`Show data for zone ${phyZone} - This functionality will be implemented`);
+    }
+    
     // Navigate to next step
     async function goToNextStep() {
         if (currentStep === 1) {
@@ -799,7 +868,11 @@
             {allometricAssignmentComplete}
             {volEqnIdStatus}
             {calculationSummary}
+            {physiographyZones}
+            {calculatedZones}
             onCalculateBiomass={calculateBiomassAndCarbon}
+            onCalculateBiomassForZone={calculateBiomassForZone}
+            onShowZoneData={showZoneData}
           />
         {/if}
         
