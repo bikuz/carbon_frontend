@@ -57,6 +57,7 @@ export const API_ENDPOINTS = {
     MRV_PROJECT_SAVE_ALLOMETRIC_ASSIGNMENTS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/save-allometric-assignments/`,
     MRV_PROJECT_BIOMASS_CALCULATION_STATUS: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/biomass-calculation-status/`,
     MRV_PROJECT_BIOMASS_CALCULATION: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/biomass-calculation/`,
+    MRV_PROJECT_EXPORT_TREE_BIOMETRIC_CALC: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/export-tree-biometric-calc/`,
     
     // Inventory endpoints
     INVENTORY_LIST_SCHEMAS: `${API_BASE_URL}/inventory/list-schemas/`,

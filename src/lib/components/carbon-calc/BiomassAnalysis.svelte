@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Calculator, CheckCircle, Leaf, TreePine, Zap, ChevronDown, ChevronUp, Eye } from '@lucide/svelte';
+    import { Calculator, CheckCircle, Leaf, TreePine, Zap, ChevronDown, ChevronUp, Eye, Download } from '@lucide/svelte';
     
     // Props using Svelte 5 runes
     let {
@@ -12,7 +12,8 @@
         calculatedZones = [],
         onCalculateBiomass,
         onCalculateBiomassForZone,
-        onShowZoneData
+        onShowZoneData,
+        onExportTreeBiometricCalc
     }: {
         biomassCalculationComplete?: boolean;
         isCalculatingBiomass?: boolean;
@@ -24,10 +25,12 @@
         onCalculateBiomass: () => void;
         onCalculateBiomassForZone: (phyZone: number) => void;
         onShowZoneData?: (phyZone: number) => void;
+        onExportTreeBiometricCalc?: () => void;
     } = $props();
     
     // State for collapsible section
     let showCalculationDetails = $state(false);
+    let isExporting = $state(false);
 </script>
 
 <div class="flex items-center gap-3 mb-6">
@@ -299,10 +302,34 @@
 
 <!-- Completion Status -->
 {#if biomassCalculationComplete}
-  <div class="flex justify-center">
+  <div class="flex flex-col items-center gap-4">
     <div class="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-3 rounded-lg">
       <CheckCircle size={20} />
       <span class="font-medium">Biomass and carbon calculation completed successfully!</span>
     </div>
+    {#if onExportTreeBiometricCalc}
+      <button
+        onclick={async () => {
+          if (onExportTreeBiometricCalc) {
+            isExporting = true;
+            try {
+              await onExportTreeBiometricCalc();
+            } finally {
+              isExporting = false;
+            }
+          }
+        }}
+        disabled={isExporting}
+        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors flex items-center gap-2 shadow-sm"
+      >
+        {#if isExporting}
+          <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+          Exporting...
+        {:else}
+          <Download size={20} />
+          Export Tree Biometric Calc (CSV)
+        {/if}
+      </button>
+    {/if}
   </div>
 {/if}

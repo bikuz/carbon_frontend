@@ -687,6 +687,58 @@
         alert(`Show data for zone ${phyZone} - This functionality will be implemented`);
     }
     
+    // Export tree_biometric_calc table to CSV
+    async function exportTreeBiometricCalc() {
+        if (!currentProjectId) {
+            alert('Project ID is required for export');
+            return;
+        }
+        
+        try {
+            const url = API_ENDPOINTS.MRV_PROJECT_EXPORT_TREE_BIOMETRIC_CALC(currentProjectId);
+            debugAPI('GET', url, null, 'request');
+            
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                // Get the CSV data as blob
+                const blob = await response.blob();
+                
+                // Create a download link
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                
+                // Get filename from Content-Disposition header or use default
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = `tree_biometric_calc_${projectData?.name || `project_${currentProjectId}`}.csv`;
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                    if (filenameMatch) {
+                        filename = filenameMatch[1];
+                    }
+                }
+                
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(downloadUrl);
+                
+                debug('Tree biometric calc data exported successfully');
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                const errorMessage = errorData.error || `HTTP ${response.status}: ${response.statusText}`;
+                debug('Failed to export tree biometric calc:', errorMessage);
+                alert(`Failed to export data: ${errorMessage}`);
+            }
+        } catch (error) {
+            debug('Error exporting tree biometric calc:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+            alert(`Error exporting data: ${errorMessage}`);
+        }
+    }
+    
     // Navigate to next step
     async function goToNextStep() {
         if (currentStep === 1) {
@@ -873,6 +925,7 @@
             onCalculateBiomass={calculateBiomassAndCarbon}
             onCalculateBiomassForZone={calculateBiomassForZone}
             onShowZoneData={showZoneData}
+            onExportTreeBiometricCalc={exportTreeBiometricCalc}
           />
         {/if}
         
