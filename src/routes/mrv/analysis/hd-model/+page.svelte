@@ -9,6 +9,7 @@
     import HdModelAssignment from '$lib/components/hd-model/HdModelAssignment.svelte';
     import HeightPrediction from '$lib/components/hd-model/HeightPrediction.svelte';
     import SlantedHeightCalculation from '$lib/components/hd-model/SlantedHeightCalculation.svelte';
+    import ZoneDataModal from '$lib/components/hd-model/ZoneDataModal.svelte';
     
     let currentStep = $state(1);
     let currentProjectId = $state<number>(0);
@@ -65,6 +66,11 @@
     let slantedHeightResults = $state<any>(null);
     let slantedHeightComplete = $state<boolean>(false);
     let slantedHeightStatusFromComponent = $state<boolean>(false);
+    
+    // Zone Data Modal state
+    let showZoneDataModal = $state<boolean>(false);
+    let selectedZoneForData = $state<number>(0);
+    let selectedZoneNameForData = $state<string>('');
     
     // Initialize store from URL parameters if store is empty
     $effect(() => {
@@ -856,9 +862,18 @@
     // Show data for a specific physiography zone
     function showZoneData(phyZone: number) {
         debug(`Showing data for physiography zone ${phyZone}`);
-        // TODO: Implement data display modal or navigation
-        // This could show a table of all trees in this zone with their current HD model assignments
-        alert(`Show data for Zone ${phyZone} - Feature coming soon!`);
+        
+        // Find the zone data to get the zone name
+        const zone = physiographyZones.find(z => z.phy_zone === phyZone);
+        selectedZoneForData = phyZone;
+        selectedZoneNameForData = zone?.physiography_name || `Zone ${phyZone}`;
+        showZoneDataModal = true;
+    }
+    
+    function closeZoneDataModal() {
+        showZoneDataModal = false;
+        selectedZoneForData = 0;
+        selectedZoneNameForData = '';
     }
     
     // Edit models for a specific physiography zone
@@ -1014,3 +1029,12 @@
     </div>
   </div>
 </div>
+
+<!-- Zone Data Modal -->
+<ZoneDataModal
+    showModal={showZoneDataModal}
+    projectId={currentProjectId}
+    phyZone={selectedZoneForData}
+    zoneName={selectedZoneNameForData}
+    onClose={closeZoneDataModal}
+/>

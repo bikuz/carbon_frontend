@@ -1,13 +1,12 @@
 <script>
-    import { TreePine, FolderOpen, Database, Wrench, Home, Settings, HelpCircle,
+    import { TreePine, FolderOpen, Database, Wrench, Settings, HelpCircle,
       TreeDeciduous,Trees
      } from '@lucide/svelte';
     import { page } from '$app/stores';
     
-    let activeItem = $state('dashboard');
+    let activeItem = $state('schemas');
     
     const navigationItems = [
-      { id: 'dashboard', label: 'Dashboard', icon: Home, href: '/' },
       // { id: 'projects', label: 'Projects', icon: FolderOpen, href: '/projects' },
       { id: 'schemas', label: 'Import Foris Data', icon: Database, href: '/inventory' },
       {id:'mrv',label:'Forest Analysis',icon:Trees, href:'/mrv'},

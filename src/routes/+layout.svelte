@@ -8,7 +8,7 @@
 
 <svelte:head>
 	
-    <title>Forest Biometric Analysis - Dashboard</title>
+    <title>Forest Biometric Analysis</title>
     <meta name="description" content="Advanced forest data analysis platform" />
 
 	<link rel="icon" href={favicon} />
