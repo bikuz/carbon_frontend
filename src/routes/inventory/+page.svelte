@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Database, Trash2, Plus, GitMerge, RefreshCw, Loader2, AlertCircle, CheckCircle, Info, Search, Filter, ExternalLink, Home, Upload, Settings } from '@lucide/svelte';
+	import { API_ENDPOINTS } from '$lib/config/api';
 
 	// Schema state
 	let schemas: any[] = [];
@@ -32,7 +33,7 @@
 		isLoadingSchemas = true;
 		errorMessage = '';
 		try {
-			const response = await fetch('http://localhost:8000/api/inventory/list-schemas/?detailed=true&include_empty=true&imported_only=true');
+			const response = await fetch(API_ENDPOINTS.INVENTORY_LIST_SCHEMAS());
 			const data = await response.json();
 			
 			if (data.success) {
@@ -66,7 +67,7 @@
 			const formData = new FormData();
 			formData.append('schema_name', schemaToDelete);
 			
-			const response = await fetch('http://localhost:8000/api/inventory/delete-schema/', {
+			const response = await fetch(API_ENDPOINTS.INVENTORY_DELETE_SCHEMA, {
 				method: 'POST',
 				body: formData
 			});

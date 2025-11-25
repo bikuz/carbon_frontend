@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import { Upload } from '@lucide/svelte';
+	import { API_ENDPOINTS } from '$lib/config/api';
 
 	let isLoading = false;
 	let errorMessage = '';
@@ -20,7 +21,7 @@
 			formData.append('zip_file', file);
 
 			// Step 1: Upload and analyze file
-			const uploadResponse = await fetch('http://localhost:8000/api/inventory/upload-sql-zip/', {
+			const uploadResponse = await fetch(API_ENDPOINTS.INVENTORY_UPLOAD_SQL_ZIP, {
 				method: 'POST',
 				body: formData
 			});
@@ -50,7 +51,7 @@
 				}
 
 				// Check if schema exists
-				const schemaCheck = await fetch('http://localhost:8000/api/inventory/confirm-import/', {
+				const schemaCheck = await fetch(API_ENDPOINTS.INVENTORY_CONFIRM_IMPORT, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 					body: new URLSearchParams({
@@ -72,7 +73,7 @@
 			}
 
 			// Step 3: Execute import
-			const importResponse = await fetch('http://localhost:8000/api/inventory/confirm-import/', {
+			const importResponse = await fetch(API_ENDPOINTS.INVENTORY_CONFIRM_IMPORT, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams({

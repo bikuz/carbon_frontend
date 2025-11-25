@@ -60,7 +60,16 @@ export const API_ENDPOINTS = {
     MRV_PROJECT_EXPORT_TREE_BIOMETRIC_CALC: (projectId: number) => `${API_BASE_URL}/mrv/projects/${projectId}/export-tree-biometric-calc/`,
     
     // Inventory endpoints
-    INVENTORY_LIST_SCHEMAS: `${API_BASE_URL}/inventory/list-schemas/`,
+    INVENTORY_LIST_SCHEMAS: (detailed: boolean = true, includeEmpty: boolean = true, importedOnly: boolean = true) => {
+        const params = new URLSearchParams();
+        if (detailed) params.append('detailed', 'true');
+        if (includeEmpty) params.append('include_empty', 'true');
+        if (importedOnly) params.append('imported_only', 'true');
+        return `${API_BASE_URL}/inventory/list-schemas/?${params.toString()}`;
+    },
+    INVENTORY_DELETE_SCHEMA: `${API_BASE_URL}/inventory/delete-schema/`,
+    INVENTORY_UPLOAD_SQL_ZIP: `${API_BASE_URL}/inventory/upload-sql-zip/`,
+    INVENTORY_CONFIRM_IMPORT: `${API_BASE_URL}/inventory/confirm-import/`,
     INVENTORY_MERGE_SCHEMAS: `${API_BASE_URL}/inventory/merge-multiple-schemas-optimized/`,
     
     // Add more endpoints as needed
