@@ -10,11 +10,11 @@
       // { id: 'projects', label: 'Projects', icon: FolderOpen, href: '/projects' },
       { id: 'schemas', label: 'Import Foris Data', icon: Database, href: '/inventory' },
       {id:'mrv',label:'Forest Analysis',icon:Trees, href:'/mrv'},
-      { id: 'tools', label: 'Tools', icon: Wrench, href: '/tools' },
+      // { id: 'tools', label: 'Tools', icon: Wrench, href: '/tools' },
     ];
     
     const bottomItems = [
-      { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
+      // { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
       // { id: 'help', label: 'Help', icon: HelpCircle, href: '/help' },
     ];
   </script>

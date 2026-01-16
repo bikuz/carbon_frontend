@@ -36,7 +36,22 @@
 		isLoadingSchemas = true;
 		errorMessage = '';
 		try {
-			const response = await fetch(`${API_ENDPOINTS.INVENTORY_LIST_SCHEMAS}?detailed=true&include_empty=false&imported_only=true`);
+			// Call the function with correct parameters: detailed=true, includeEmpty=false, importedOnly=true
+			const response = await fetch(API_ENDPOINTS.INVENTORY_LIST_SCHEMAS(true, false, true));
+			
+			// Check if response is OK before parsing
+			if (!response.ok) {
+				const errorText = await response.text();
+				throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+			}
+			
+			// Check content-type to ensure it's JSON
+			const contentType = response.headers.get('content-type');
+			if (!contentType || !contentType.includes('application/json')) {
+				const text = await response.text();
+				throw new Error(`Expected JSON but received ${contentType}. Response: ${text.substring(0, 100)}`);
+			}
+			
 			const data = await response.json();
 			
 			if (data.success) {
