@@ -135,7 +135,7 @@
                         4
                     </div>
                     <div>
-                        <h3 class="font-semibold text-slate-900 mb-1">Carbon Emission Calculation</h3>
+                        <h3 class="font-semibold text-slate-900 mb-1">Carbon Estimation Calculation</h3>
                         <p class="text-slate-600 text-sm">
                             Calculate tree biomass components (stem, branch, foliage) and estimate carbon stocks. 
                             Generate comprehensive reports for carbon accounting and forest management.

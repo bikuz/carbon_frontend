@@ -1,0 +1,135 @@
+@startuml Forest Biometric Analysis System - Use Case Diagram
+
+!define RECTANGLE class
+
+left to right direction
+
+actor "Forest Analyst" as User
+
+rectangle "Forest Biometric Analysis System" {
+    
+    package "Data Management (Inventory)" {
+        usecase "UC1: Import Foris Data Schema" as UC1
+        usecase "UC2: Merge Schemas" as UC2
+        usecase "UC3: View Schema Dashboard" as UC3
+        usecase "UC4: Delete Schema" as UC4
+        usecase "UC5: Search/Filter Schemas" as UC5
+    }
+    
+    package "Project Management" {
+        usecase "UC6: Create Analysis Project" as UC6
+        usecase "UC7: Edit Project" as UC7
+        usecase "UC8: Delete Project" as UC8
+        usecase "UC9: Select/Continue Project" as UC9
+        usecase "UC10: View Project Progress" as UC10
+    }
+    
+    package "Phase 1: Data Selection & Validation" {
+        usecase "UC11: Select Schema & Table" as UC11
+        usecase "UC12: Import Data to Project" as UC12
+        usecase "UC13: Data Quality Check" as UC13
+        usecase "UC14: Resolve Data Issues" as UC14
+        usecase "UC15: Data Cleaning" as UC15
+    }
+    
+    package "Phase 2: Height-Diameter Modeling" {
+        usecase "UC16: Assign HD Models" as UC16
+        usecase "UC17: Predict Tree Heights" as UC17
+        usecase "UC18: Validate HD Models" as UC18
+        usecase "UC19: Calculate Slanted Heights" as UC19
+    }
+    
+    package "Phase 3: Volume Ratio Calculation" {
+        usecase "UC20: Calculate Volume Ratios" as UC20
+        usecase "UC21: Handle Broken Trees" as UC21
+        usecase "UC22: Apply Taper Functions" as UC22
+    }
+    
+    package "Phase 4: Carbon Estimation Calculation" {
+        usecase "UC23: Assign Allometric Equations" as UC23
+        usecase "UC24: Calculate Biomass" as UC24
+        usecase "UC25: Calculate Carbon Stocks" as UC25
+        usecase "UC26: Export Results" as UC26
+    }
+}
+
+' User relationships
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+User --> UC10
+User --> UC11
+User --> UC12
+User --> UC13
+User --> UC14
+User --> UC15
+User --> UC16
+User --> UC17
+User --> UC18
+User --> UC19
+User --> UC20
+User --> UC21
+User --> UC22
+User --> UC23
+User --> UC24
+User --> UC25
+User --> UC26
+
+' Dependencies between use cases
+UC6 ..> UC11 : <<include>>
+UC11 ..> UC12 : <<include>>
+UC12 ..> UC13 : <<include>>
+UC13 ..> UC14 : <<include>>
+UC14 ..> UC15 : <<include>>
+UC15 ..> UC16 : <<include>>
+UC16 ..> UC17 : <<include>>
+UC17 ..> UC18 : <<include>>
+UC18 ..> UC20 : <<include>>
+UC20 ..> UC21 : <<include>>
+UC21 ..> UC22 : <<include>>
+UC22 ..> UC23 : <<include>>
+UC23 ..> UC24 : <<include>>
+UC24 ..> UC25 : <<include>>
+UC25 ..> UC26 : <<include>>
+
+UC1 ..> UC3 : <<extend>>
+UC2 ..> UC3 : <<extend>>
+UC9 ..> UC10 : <<include>>
+
+note right of UC1
+  Upload SQL zip files
+  from Foris database
+end note
+
+note right of UC6
+  Create new analysis
+  project with name
+  and description
+end note
+
+note right of UC13
+  Validates Plot Codes,
+  Physiography Zones,
+  Tree Numbers, Species,
+  and DBH measurements
+end note
+
+note right of UC20
+  Uses Fibonacci taper
+  functions for broken
+  trees correction
+end note
+
+note right of UC24
+  Calculates Stem,
+  Branch, and Foliage
+  biomass components
+end note
+
+@enduml

@@ -42,6 +42,34 @@
     onsaveAllChanges
   }: Props = $props();
   
+  // Function to calculate page numbers for pagination
+  function getPageNumbers(): number[] {
+    const pages: number[] = [];
+    
+    if (totalPages <= 5) {
+      // Show all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else if (currentPage <= 3) {
+      // Show first 5 pages
+      for (let i = 1; i <= 5; i++) {
+        pages.push(i);
+      }
+    } else if (currentPage >= totalPages - 2) {
+      // Show last 5 pages
+      for (let i = totalPages - 4; i <= totalPages; i++) {
+        if (i >= 1 && i <= totalPages) pages.push(i);
+      }
+    } else {
+      // Show pages around current page
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+        if (i >= 1 && i <= totalPages) pages.push(i);
+      }
+    }
+    return pages;
+  }
+  
 </script>
 
 <!-- Species-HD Model Modal -->
@@ -71,7 +99,7 @@
             {isLoadingUnassignedRecords ? 'Loading unassigned records...' : 'Loading HD models...'}
           </span>
         </div>
-      {:else if unassignedRecords.length > 0}
+      {:else if totalRecords > 0}
         <!-- Save Results Summary -->
         {#if saveSummary}
           <div class="mb-4 p-4 border rounded-lg {
@@ -135,80 +163,88 @@
           <div class="max-h-96 overflow-y-auto">
             <table class="min-w-full divide-y divide-slate-200">
               <tbody class="bg-white divide-y divide-slate-200">
-                {#each unassignedRecords as record, index}
-                  <tr class="hover:bg-slate-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 w-24">{record.species_code}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 w-48">{record.species_name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 w-40">
-                      <select 
-                        bind:value={record.model_name}
-                        class="w-full pl-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      >
-                        <option value="">Select HD Model</option>
-                        {#if hdModels.length > 0}
-                          {#each hdModels as hdModel}
-                            <option value={hdModel.code}>{hdModel.code}-{hdModel.name}</option>
-                          {/each}
+                {#if unassignedRecords.length > 0}
+                  {#each unassignedRecords as record, index}
+                    <tr class="hover:bg-slate-50">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 w-24">{record.species_code}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 w-48">{record.species_name}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 w-40">
+                        <select 
+                          bind:value={record.model_name}
+                          class="w-full pl-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        >
+                          <option value="">Select HD Model</option>
+                          {#if hdModels.length > 0}
+                            {#each hdModels as hdModel}
+                              <option value={hdModel.code}>{hdModel.code}-{hdModel.name}</option>
+                            {/each}
+                          {:else}
+                            <option value="" disabled>No HD models available</option>
+                          {/if}
+                        </select>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 w-32">
+                        <input 
+                          type="number" 
+                          step="0.001"
+                          bind:value={record.hd_a}
+                          class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center"
+                          placeholder="a"
+                        />
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 w-32">
+                        <input 
+                          type="number" 
+                          step="0.001"
+                          bind:value={record.hd_b}
+                          class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center"
+                          placeholder="b"
+                        />
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 w-32">
+                        <input 
+                          type="number" 
+                          step="0.001"
+                          bind:value={record.hd_c}
+                          class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center"
+                          placeholder="c"
+                        />
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm w-48">
+                        {#if record.status}
+                          <div class="flex items-center gap-2">
+                            <span class="px-2 py-1 text-xs rounded-full font-medium {
+                              record.status === 'created' ? 'bg-green-100 text-green-800' :
+                              record.status === 'updated' ? 'bg-blue-100 text-blue-800' :
+                              record.status === 'error' ? 'bg-red-100 text-red-800' :
+                              'bg-slate-100 text-slate-800'
+                            }">
+                              {record.status}
+                            </span>
+                            <span class="text-xs text-slate-600" title={record.message}>
+                              {record.message}
+                            </span>
+                          </div>
                         {:else}
-                          <option value="" disabled>No HD models available</option>
+                          <span class="text-slate-400 text-xs">Not saved</span>
                         {/if}
-                      </select>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 w-32">
-                      <input 
-                        type="number" 
-                        step="0.001"
-                        bind:value={record.hd_a}
-                        class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center"
-                        placeholder="a"
-                      />
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 w-32">
-                      <input 
-                        type="number" 
-                        step="0.001"
-                        bind:value={record.hd_b}
-                        class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center"
-                        placeholder="b"
-                      />
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 w-32">
-                      <input 
-                        type="number" 
-                        step="0.001"
-                        bind:value={record.hd_c}
-                        class="w-full px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center"
-                        placeholder="c"
-                      />
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm w-48">
-                      {#if record.status}
-                        <div class="flex items-center gap-2">
-                          <span class="px-2 py-1 text-xs rounded-full font-medium {
-                            record.status === 'created' ? 'bg-green-100 text-green-800' :
-                            record.status === 'updated' ? 'bg-blue-100 text-blue-800' :
-                            record.status === 'error' ? 'bg-red-100 text-red-800' :
-                            'bg-slate-100 text-slate-800'
-                          }">
-                            {record.status}
-                          </span>
-                          <span class="text-xs text-slate-600" title={record.message}>
-                            {record.message}
-                          </span>
-                        </div>
-                      {:else}
-                        <span class="text-slate-400 text-xs">Not saved</span>
-                      {/if}
+                      </td>
+                    </tr>
+                  {/each}
+                {:else}
+                  <tr>
+                    <td colspan="7" class="px-6 py-8 text-center text-slate-500">
+                      No records on this page. Use pagination to navigate to other pages.
                     </td>
                   </tr>
-                {/each}
+                {/if}
               </tbody>
             </table>
           </div>
         </div>
         
         <!-- Pagination Controls -->
-        {#if totalPages > 1 && pageSize !== -1}
+        {#if totalPages > 1 && pageSize !== -1 && totalRecords > 0}
           <div class="mt-4 flex items-center justify-between">
             <div class="text-sm text-slate-600">
               Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalRecords)} of {totalRecords} records
@@ -222,18 +258,7 @@
                 Previous
               </button>
               
-              {#each Array.from({length: Math.min(5, totalPages)}, (_, i) => {
-                const pageNum = i + 1;
-                if (totalPages <= 5) {
-                  return pageNum;
-                } else if (currentPage <= 3) {
-                  return pageNum;
-                } else if (currentPage >= totalPages - 2) {
-                  return totalPages - 4 + pageNum;
-                } else {
-                  return currentPage - 2 + pageNum;
-                }
-              }) as pageNum}
+              {#each getPageNumbers() as pageNum}
                 <button 
                   onclick={() => onloadPage(pageNum)}
                   disabled={pageNum === currentPage || isLoadingUnassignedRecords}
@@ -249,16 +274,20 @@
               
               <button 
                 onclick={() => onloadPage(currentPage + 1)}
-                disabled={currentPage === totalPages || isLoadingUnassignedRecords}
+                disabled={currentPage >= totalPages || isLoadingUnassignedRecords}
                 class="px-3 py-2 text-sm border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
             </div>
           </div>
-        {:else if pageSize === -1}
+        {:else if pageSize === -1 && totalRecords > 0}
           <div class="mt-4 text-center text-sm text-slate-600">
             Showing all {totalRecords} records
+          </div>
+        {:else if totalPages === 1 && totalRecords > 0}
+          <div class="mt-4 text-center text-sm text-slate-600">
+            Showing {totalRecords} record{totalRecords !== 1 ? 's' : ''}
           </div>
         {/if}
       {:else}

@@ -77,7 +77,7 @@
             'Data Selection & Validation',
             'Height-Diameter Modelling',
             'Volume Ratio Calculation',
-            'Carbon Emission Calculation'
+            'Carbon Estimation Calculation'
         ];
         return phaseNames[phase - 1] || `Phase ${phase}`;
     }

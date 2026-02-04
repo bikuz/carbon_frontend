@@ -10,7 +10,7 @@ Volume ratio calculation is essential for accurate biomass and carbon estimation
 
 - **Broken trees** have reduced volume compared to intact trees
 - **Volume ratios** provide a correction factor for biomass calculations
-- **Accurate ratios** ensure precise carbon emission calculations in the final phase
+- **Accurate ratios** ensure precise carbon estimation calculations in the final phase
 
 ## Prerequisites
 
@@ -267,7 +267,7 @@ After successful volume ratio calculation:
 
 1. **Review results** in the interface
 2. **Check case breakdowns** for data quality insights
-3. **Proceed to Phase 4**: Carbon Emission Calculation
+3. **Proceed to Phase 4**: Carbon Estimation Calculation
 4. **Use volume ratios** in biomass calculations
 
 ## Related Documentation

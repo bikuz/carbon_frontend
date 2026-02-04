@@ -25,7 +25,7 @@ Before starting the carbon biomass calculation, ensure you have completed:
    - Volume ratios must be calculated for broken trees
    - All trees must have volume ratio values (1.0 for non-broken trees)
 
-## Phase 4: Carbon Emission Calculation
+## Phase 4: Carbon Estimation Calculation
 
 ### Step 1: Assign Allometric Equations
 
@@ -417,7 +417,7 @@ This reflects the typical sampling design where larger trees are measured more i
 
 ## Next Steps
 
-After completing Phase 4 (Carbon Emission Calculation):
+After completing Phase 4 (Carbon Estimation Calculation):
 
 1. **Review Results**: Export and review the tree biometric calc data
 2. **Quality Assurance**: Verify calculation results against expected values

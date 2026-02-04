@@ -52,6 +52,8 @@
         selectedPhyZone = zone.phy_zone;
         selectedPhyZoneData = zone;
         showSpeciesHdModelModal = true;
+        // Reset pagination when opening modal
+        currentPage = 1;
         debug('Opening modal for zone:', zone.phy_zone, 'Modal visible:', showSpeciesHdModelModal);
         loadUnassignedRecords();
         loadHdModels();
@@ -79,8 +81,6 @@
     async function loadUnassignedRecords() {
         if (!currentProjectId || !selectedPhyZone) return;
         
-        // Reset pagination when opening modal
-        currentPage = 1;
         // Clear previous save results
         saveSummary = null;
         
@@ -103,25 +103,45 @@
                 const data = await response.json();
                 debugAPI('GET', url, data, 'response');
                 
-                if (data.success && data.records) {
-                    // Transform the data to match the table structure
-                    unassignedRecords = data.records.map((record: any) => ({
-                        species_code: record.species_code,
-                        species_name: record.species_name,
-                        model_name: '', // This will store the HD model code
-                        hd_a: '',
-                        hd_b: '',
-                        hd_c: ''
-                    }));
+                if (data.success) {
+                    // Handle empty records array
+                    if (data.records && data.records.length > 0) {
+                        // Transform the data to match the table structure
+                        unassignedRecords = data.records.map((record: any) => ({
+                            species_code: record.species_code,
+                            species_name: record.species_name,
+                            model_name: '', // This will store the HD model code
+                            hd_a: '',
+                            hd_b: '',
+                            hd_c: ''
+                        }));
+                    } else {
+                        unassignedRecords = [];
+                    }
                     
-                    // Update pagination info
-                    totalRecords = data.total_records || unassignedRecords.length;
-                    totalPages = pageSize === -1 ? 1 : Math.ceil(totalRecords / pageSize);
+                    // Update pagination info - use total_records from API if available
+                    totalRecords = data.total_records ?? 0;
+                    
+                    // Calculate total pages correctly
+                    if (totalRecords === 0) {
+                        totalPages = 0;
+                    } else if (pageSize === -1) {
+                        totalPages = 1;
+                    } else {
+                        totalPages = Math.ceil(totalRecords / pageSize);
+                    }
+                    
+                    // If current page is beyond total pages, reset to last valid page
+                    if (totalPages > 0 && currentPage > totalPages) {
+                        currentPage = totalPages;
+                        // Note: The caller should reload after this adjustment
+                    }
                     
                     debug('Loaded unassigned records:', {
                         records: unassignedRecords,
                         totalRecords,
                         totalPages,
+                        currentPage,
                         pageSize: effectivePageSize,
                         apiResponse: data
                     });

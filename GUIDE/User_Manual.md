@@ -7,7 +7,7 @@ This manual references the "Analysis Workflow" which consists of four key phases
 1.  **Data Selection & Validation**
 2.  **Height-Diameter Modelling**
 3.  **Volume Ratio Calculation**
-4.  **Carbon Emission Calculation**
+4.  **Carbon Estimation Calculation**
 
 ---
 
@@ -141,7 +141,7 @@ This is the core function of the application. To begin, click **Start Analysis**
 
 ---
 
-### Phase 4: Carbon Emission Calculation
+### Phase 4: Carbon Estimation Calculation
 *Objective: Map allometric equations and calculate final biomass/carbon stocks.*
 
 #### Step 1: Assign Allometric Equations
@@ -173,7 +173,7 @@ This is the core function of the application. To begin, click **Start Analysis**
 
 Once analysis is complete, you can download the detailed datasets.
 
-1.  Navigate to the **Carbon Emission Calculation** page (Phase 4).
+1.  Navigate to the **Carbon Estimation Calculation** page (Phase 4).
 2.  Click the **Export Tree Biometric Calc (CSV)** button.
 3.  A file named `tree_biometric_calc_[project_name].csv` will download.
     *   **Contents**: Tree-level data, predicted heights, volume ratios, biomass components, and carbon stocks.

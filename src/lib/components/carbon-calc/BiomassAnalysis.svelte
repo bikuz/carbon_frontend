@@ -37,7 +37,7 @@
   <Calculator class="text-emerald-600" size={24} />
   <div>
     <h2 class="text-xl font-semibold text-slate-900">Step 2: Calculate Biomass & Carbon</h2>
-    <p class="text-slate-600">Compute biomass and carbon emissions using allometric equations</p>
+    <p class="text-slate-600">Compute biomass and carbon estimations using allometric equations</p>
   </div>
 </div>
 

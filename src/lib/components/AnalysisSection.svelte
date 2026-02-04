@@ -10,7 +10,7 @@
     const tabs = [
       { id: 'height-diameter', label: 'Height-Diameter Analysis', icon: BarChart3 },
       { id: 'volume-ratio', label: 'Volume Ratio', icon: TrendingUp },
-      { id: 'carbon-emission', label: 'Carbon Emission', icon: Leaf }
+      { id: 'carbon-emission', label: 'Carbon Estimation', icon: Leaf }
     ];
   </script>
   

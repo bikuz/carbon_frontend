@@ -570,7 +570,7 @@
         if (!currentProjectId) return;
         
         isCalculatingBiomass = true;
-        processingMessage = 'Calculating biomass and carbon emissions...';
+        processingMessage = 'Calculating biomass and carbon estimations...';
         debug('Starting biomass and carbon calculation');
         
         try {
@@ -757,7 +757,7 @@
             try {
                 const url = API_ENDPOINTS.MRV_UPDATE_PROJECT(currentProjectId);
                 const updateData = {
-                    current_phase: 4,  // Phase 4 - Carbon Emission Calculation
+                    current_phase: 4,  // Phase 4 - Carbon Estimation Calculation
                     current_step: 2     // Step 2 - Calculate Biomass & Carbon
                 };
                 debugAPI('PUT', url, updateData, 'request');
@@ -812,7 +812,7 @@
                     if (result.success) {
                         debug('Project updated to next phase successfully:', result.project);
                         // Navigate to next phase or show completion message
-                        alert('Carbon Emission Analysis completed successfully!');
+                        alert('Carbon Estimation Analysis completed successfully!');
                     }
                 }
             } catch (error) {
@@ -832,7 +832,7 @@
     // Define steps for the process
     const steps = [
         { id: 1, title: 'Assign Allometric', description: 'Map species to biomass equations' },
-        { id: 2, title: 'Calculate Biomass', description: 'Compute biomass and carbon emissions' }
+        { id: 2, title: 'Calculate Biomass', description: 'Compute biomass and carbon estimations' }
     ];
 
     // Initialize component
@@ -862,7 +862,7 @@
             <TreePine class="text-emerald-600" size={24} />
           </div>
           <div>
-            <h1 class="text-2xl font-bold text-slate-900">Phase 4: Carbon Emission Calculation</h1>
+            <h1 class="text-2xl font-bold text-slate-900">Phase 4: Carbon Estimation Calculation</h1>
             <p class="text-slate-600">Project: <strong>{projectData?.name || 'Forest Biometric Analysis'}</strong></p>
           </div>
         </div>

@@ -295,7 +295,7 @@ These parameters are maintained when navigating between steps and phases.
 After completing Phase 2 (Height-Diameter Modeling):
 
 1. **Phase 3**: Volume Ratio Calculation
-2. **Phase 4**: Carbon Emission Calculation
+2. **Phase 4**: Carbon Estimation Calculation
 
 The system will automatically navigate to the next phase when all steps in the current phase are completed successfully.
 

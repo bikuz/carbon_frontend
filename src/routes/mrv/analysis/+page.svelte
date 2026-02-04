@@ -57,8 +57,8 @@
       },
       {
         id: 4,
-        title: 'Carbon Emission Calculation',
-        shortTitle: 'Carbon Emission',
+        title: 'Carbon Estimation Calculation',
+        shortTitle: 'Carbon Estimation',
         description: 'Estimate carbon storage and emission factors',
         icon: Leaf,
         steps: ['Biomass Estimation', 'Carbon Conversion', 'Emission Factors', 'Final Report'],

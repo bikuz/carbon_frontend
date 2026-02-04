@@ -267,7 +267,7 @@
         try {
             const url = API_ENDPOINTS.MRV_UPDATE_PROJECT(currentProjectId);
             const updateData = {
-                current_phase: 4,  // Phase 4 - Carbon Emission Calculation
+                current_phase: 4,  // Phase 4 - Carbon Estimation Calculation
                 current_step: 1     // Step 1 of next phase
             };
             debugAPI('PUT', url, updateData, 'request');
@@ -497,7 +497,7 @@
               disabled={!volumeRatioComplete}
               class="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-2"
             >
-              {volumeRatioComplete ? 'Continue to Carbon Emission Analysis' : 'Complete Volume Ratio Calculation to Continue'}
+              {volumeRatioComplete ? 'Continue to Carbon Estimation Analysis' : 'Complete Volume Ratio Calculation to Continue'}
             </button>
           </div>
         </div>
